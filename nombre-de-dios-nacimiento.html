@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tus Nombres de Dios · Open Kabbalah</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0B1220;
+    --violet: #752bdf;
+    --violet-light: #c4a0ff;
+    --gold: #C9A84C;
+    --gold-light: #e8c97a;
+    --green: #00d89e;
+    --white: #ffffff;
+    --white-60: rgba(255,255,255,0.6);
+    --white-30: rgba(255,255,255,0.3);
+    --white-10: rgba(255,255,255,0.1);
+    --white-06: rgba(255,255,255,0.06);
+    --card-bg: rgba(255,255,255,0.04);
+    --card-border: rgba(255,255,255,0.08);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Hebrew Rain ── */
+  canvas#rain {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.13;
+    z-index: 0;
+  }
+
+  /* ── Layout ── */
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 48px 20px 80px;
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+    text-decoration: none;
+  }
+
+  .logo-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(117,43,223,0.3);
+    border: 1.5px solid var(--violet);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--violet-light);
+    font-weight: 600;
+  }
+
+  .logo-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: 0.04em;
+  }
+
+  .header h1 {
+    font-size: clamp(26px, 5vw, 38px);
+    font-weight: 700;
+    line-height: 1.15;
+    background: linear-gradient(135deg, var(--white) 0%, var(--gold-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 14px;
+  }
+
+  .header p {
+    font-size: 15px;
+    color: var(--white-60);
+    line-height: 1.7;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  /* ── Explicación ── */
+  .explainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+
+  @media (max-width: 520px) {
+    .explainer { grid-template-columns: 1fr; }
+  }
+
+  .explainer-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 18px 20px;
+  }
+
+  .explainer-card .icon {
+    font-size: 22px;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .explainer-card h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 6px;
+    letter-spacing: 0.03em;
+  }
+
+  .explainer-card p {
+    font-size: 12px;
+    color: var(--white-60);
+    line-height: 1.6;
+  }
+
+  /* ── Form ── */
+  .form-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    padding: 32px;
+    margin-bottom: 32px;
+  }
+
+  .form-card h2 {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+
+  .form-card .form-sub {
+    font-size: 13px;
+    color: var(--white-30);
+    margin-bottom: 24px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 480px) {
+    .form-grid { grid-template-columns: 1fr; }
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .field label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .field input {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--white);
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  .field input:focus {
+    border-color: rgba(117,43,223,0.5);
+  }
+
+  .field input::-webkit-calendar-picker-indicator {
+    filter: invert(1) opacity(0.4);
+    cursor: pointer;
+  }
+
+  .btn-calc {
+    width: 100%;
+    background: var(--violet);
+    color: var(--white);
+    border: none;
+    border-radius: 999px;
+    padding: 15px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.02em;
+  }
+
+  .btn-calc:hover { background: #8b3ef5; }
+  .btn-calc:active { transform: scale(0.98); }
+
+  /* ── Resultado ── */
+  #resultado {
+    display: none;
+    animation: fadeUp 0.4s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .resultado-header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .resultado-header .label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+
+  .resultado-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  .nombres-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 520px) {
+    .nombres-grid { grid-template-columns: 1fr; }
+  }
+
+  .nombre-card {
+    border-radius: 20px;
+    padding: 24px 20px;
+    text-align: center;
+  }
+
+  .nombre-card.dia {
+    background: rgba(117,43,223,0.1);
+    border: 1px solid rgba(117,43,223,0.25);
+  }
+
+  .nombre-card.hora {
+    background: rgba(201,168,76,0.08);
+    border: 1px solid rgba(201,168,76,0.2);
+  }
+
+  .nombre-card .tipo {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 10px;
+  }
+
+  .nombre-card.dia .tipo { color: var(--violet-light); }
+  .nombre-card.hora .tipo { color: var(--gold); }
+
+  .nombre-card .numero {
+    font-size: 11px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    opacity: 0.5;
+  }
+
+  .nombre-card.dia .numero { color: var(--violet-light); }
+  .nombre-card.hora .numero { color: var(--gold); }
+
+  .nombre-card .hebreo {
+    font-size: 36px;
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+    display: block;
+    font-family: serif;
+  }
+
+  .nombre-card.dia .hebreo { color: var(--violet-light); }
+  .nombre-card.hora .hebreo { color: var(--gold); }
+
+  .nombre-card .nombre {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+
+  .nombre-card .significado {
+    font-size: 12px;
+    color: var(--white-60);
+    line-height: 1.5;
+  }
+
+  .interpretacion {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 20px 22px;
+    margin-bottom: 20px;
+  }
+
+  .interpretacion h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 10px;
+    letter-spacing: 0.03em;
+  }
+
+  .interpretacion p {
+    font-size: 13px;
+    color: var(--white-60);
+    line-height: 1.7;
+  }
+
+  .btn-reset {
+    width: 100%;
+    background: transparent;
+    color: var(--white-30);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 999px;
+    padding: 12px;
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-reset:hover {
+    border-color: rgba(255,255,255,0.2);
+    color: var(--white-60);
+  }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    margin-top: 48px;
+    font-size: 12px;
+    color: var(--white-30);
+  }
+
+  .footer a {
+    color: var(--gold);
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="rain"></canvas>
+
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <a class="logo" href="https://ia72-v2.openkabbalah.org">
+      <div class="logo-dot">OK</div>
+      <span class="logo-text">Open Kabbalah</span>
+    </a>
+    <h1>Descubrí tus<br>Nombres de Dios</h1>
+    <p>Cada persona nace bajo la influencia de dos Nombres sagrados de los 72. Uno corresponde al día de tu nacimiento y otro a la hora exacta en que llegaste al mundo.</p>
+  </div>
+
+  <!-- Explicación -->
+  <div class="explainer">
+    <div class="explainer-card">
+      <span class="icon">☀️</span>
+      <h3>Nombre del Día</h3>
+      <p>El año se divide en 72 períodos de aproximadamente 5 días. El período en que naciste determina tu Nombre del Día, que influye en tu misión de vida y carácter esencial.</p>
+    </div>
+    <div class="explainer-card">
+      <span class="icon">🌙</span>
+      <h3>Nombre de la Hora</h3>
+      <p>Cada día se divide en 72 ventanas de 20 minutos. La hora exacta de tu nacimiento revela tu Nombre de la Hora, que influye en tu forma de relacionarte y manifestar.</p>
+    </div>
+  </div>
+
+  <!-- Formulario -->
+  <div class="form-card" id="formSection">
+    <h2>Calculá tus Nombres</h2>
+    <p class="form-sub">Ingresá tu fecha y hora de nacimiento para descubrir los Nombres que te acompañan</p>
+
+    <div class="form-grid">
+      <div class="field">
+        <label>Fecha de nacimiento</label>
+        <input type="date" id="fecha" max="2024-12-31">
+      </div>
+      <div class="field">
+        <label>Hora de nacimiento</label>
+        <input type="time" id="hora" placeholder="00:00">
+      </div>
+    </div>
+
+    <button class="btn-calc" onclick="calcular()">
+      ✨ Descubrir mis Nombres de Dios
+    </button>
+  </div>
+
+  <!-- Resultado -->
+  <div id="resultado">
+    <div class="resultado-header">
+      <div class="label">✦ Tu lectura kabbalistic ✦</div>
+      <h2 id="resultado-titulo">Tus dos Nombres sagrados</h2>
+    </div>
+
+    <div class="nombres-grid">
+      <div class="nombre-card dia">
+        <div class="tipo">Nombre del Día</div>
+        <div class="numero" id="num-dia"></div>
+        <span class="hebreo" id="heb-dia"></span>
+        <div class="nombre" id="nombre-dia"></div>
+        <div class="significado" id="sig-dia"></div>
+      </div>
+      <div class="nombre-card hora">
+        <div class="tipo">Nombre de la Hora</div>
+        <div class="numero" id="num-hora"></div>
+        <span class="hebreo" id="heb-hora"></span>
+        <div class="nombre" id="nombre-hora"></div>
+        <div class="significado" id="sig-hora"></div>
+      </div>
+    </div>
+
+    <div class="interpretacion">
+      <h3>✦ Cómo trabajar con tus Nombres</h3>
+      <p id="interpretacion-texto"></p>
+    </div>
+
+    <button class="btn-reset" onclick="resetear()">← Calcular otra fecha</button>
+  </div>
+
+  <div class="footer">
+    Una herramienta de <a href="https://ia72-v2.openkabbalah.org">Open Kabbalah</a> · Los 72 Nombres de Dios
+  </div>
+
+</div>
+
+<script>
+// ── Hebrew Rain ──
+const canvas = document.getElementById('rain');
+const ctx = canvas.getContext('2d');
+const HEB = 'אבגדהוזחטיכלמנסעפצקרשתיהוהסאלמהשאלדוהאלמ';
+let drops = [];
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  drops = Array.from({ length: Math.ceil(canvas.width / 22) }, () => Math.random() * canvas.height / 20);
+}
+
+function drawRain() {
+  ctx.fillStyle = 'rgba(11,18,32,0.08)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.font = '16px serif';
+  ctx.fillStyle = 'rgba(201,168,76,0.5)';
+  drops.forEach((y, i) => {
+    ctx.fillText(HEB[Math.floor(Math.random() * HEB.length)], i * 22, y * 20);
+    if (y * 20 > canvas.height && Math.random() > 0.97) drops[i] = 0;
+    drops[i] += 0.4;
+  });
+}
+
+resize();
+window.addEventListener('resize', resize);
+setInterval(drawRain, 60);
+
+// ── Los 72 Nombres ──
+const NOMBRES = [
+  { numero: 1,  nombre: 'Vehuiah',   hebreo: 'והו', significado: 'Voluntad y nuevos comienzos',          interpretacion: 'Te da la fuerza para iniciar y superar obstáculos con determinación divina.' },
+  { numero: 2,  nombre: 'Jeliel',    hebreo: 'ילי', significado: 'Amor y sabiduría',                     interpretacion: 'Armoniza tus relaciones y te conecta con el amor incondicional.' },
+  { numero: 3,  nombre: 'Sitael',    hebreo: 'סיט', significado: 'Construcción del universo',            interpretacion: 'Te ayuda a construir y manifestar tus proyectos con base sólida.' },
+  { numero: 4,  nombre: 'Elemia',    hebreo: 'עלם', significado: 'Protección divina',                    interpretacion: 'Actúa como escudo espiritual frente a energías adversas.' },
+  { numero: 5,  nombre: 'Mahasiah',  hebreo: 'מהש', significado: 'Rectificación',                        interpretacion: 'Facilita el aprendizaje y corrige patrones que te limitan.' },
+  { numero: 6,  nombre: 'Lelahel',   hebreo: 'ללה', significado: 'Luz para la comprensión',              interpretacion: 'Ilumina tu mente para comprender verdades profundas.' },
+  { numero: 7,  nombre: 'Achaiah',   hebreo: 'אכא', significado: 'Paciencia y descubrimiento',           interpretacion: 'Desarrolla tu paciencia y te revela los misterios de la existencia.' },
+  { numero: 8,  nombre: 'Cahetel',   hebreo: 'כהת', significado: 'Bendición divina',                     interpretacion: 'Atrae bendiciones y abundancia a todas las áreas de tu vida.' },
+  { numero: 9,  nombre: 'Haziel',    hebreo: 'הזי', significado: 'Perdón divino',                        interpretacion: 'Abre el camino del perdón y la misericordia universal.' },
+  { numero: 10, nombre: 'Aladiah',   hebreo: 'אלד', significado: 'Gracia divina',                        interpretacion: 'Te otorga la gracia para superar errores del pasado.' },
+  { numero: 11, nombre: 'Lauviah',   hebreo: 'לאו', significado: 'Triunfo',                              interpretacion: 'Potencia tu capacidad para triunfar contra toda adversidad.' },
+  { numero: 12, nombre: 'Hahaiah',   hebreo: 'הها', significado: 'Refugio',                              interpretacion: 'Actúa como refugio espiritual en momentos de tormenta.' },
+  { numero: 13, nombre: 'Iezalel',   hebreo: 'יזל', significado: 'Fidelidad y memoria',                  interpretacion: 'Fortalece tu memoria y tu compromiso con lo sagrado.' },
+  { numero: 14, nombre: 'Mebahel',   hebreo: 'מבה', significado: 'Verdad y libertad',                    interpretacion: 'Te libera de mentiras y te ancla en la verdad esencial.' },
+  { numero: 15, nombre: 'Hariel',    hebreo: 'הרי', significado: 'Purificación',                         interpretacion: 'Purifica tu mente y tus emociones de todo lo que no te sirve.' },
+  { numero: 16, nombre: 'Hekamiah',  hebreo: 'הקמ', significado: 'Lealtad',                              interpretacion: 'Desarrolla tu integridad y la lealtad hacia tus valores más profundos.' },
+  { numero: 17, nombre: 'Lauviah II',hebreo: 'לאו', significado: 'Revelación',                           interpretacion: 'Abre canales de revelación onírica y visión espiritual.' },
+  { numero: 18, nombre: 'Caliel',    hebreo: 'כלי', significado: 'Justicia',                             interpretacion: 'Activa la justicia divina en todos los asuntos de tu vida.' },
+  { numero: 19, nombre: 'Leuviah',   hebreo: 'לוו', significado: 'Inteligencia expansiva',               interpretacion: 'Amplía tu inteligencia y te conecta con la memoria del alma.' },
+  { numero: 20, nombre: 'Pahaliah',  hebreo: 'פהל', significado: 'Redención',                            interpretacion: 'Facilita la redención y el retorno a tu esencia más pura.' },
+  { numero: 21, nombre: 'Nelchael',  hebreo: 'נלכ', significado: 'Conocimiento supremo',                 interpretacion: 'Te conecta con el conocimiento elevado y la comprensión cósmica.' },
+  { numero: 22, nombre: 'Yeiayel',   hebreo: 'ייי', significado: 'Fama y fortuna',                       interpretacion: 'Atrae reconocimiento y prosperidad en tu camino.' },
+  { numero: 23, nombre: 'Melahel',   hebreo: 'מלה', significado: 'Curación',                             interpretacion: 'Activa los poderes de curación física, emocional y espiritual.' },
+  { numero: 24, nombre: 'Haheuiah',  hebreo: 'חהו', significado: 'Protección',                           interpretacion: 'Te protege de energías negativas y decisiones equivocadas.' },
+  { numero: 25, nombre: 'Nith-Haiah',hebreo: 'נתה', significado: 'Sabiduría oculta',                     interpretacion: 'Revela los misterios ocultos y la magia de la existencia.' },
+  { numero: 26, nombre: 'Haaiah',    hebreo: 'האא', significado: 'Contemplación',                        interpretacion: 'Profundiza tu capacidad de observación e introspección.' },
+  { numero: 27, nombre: 'Yeratel',   hebreo: 'ירת', significado: 'Propagación de la luz',                interpretacion: 'Te convierte en un canal de luz para iluminar a otros.' },
+  { numero: 28, nombre: 'Seheiah',   hebreo: 'שאה', significado: 'Longevidad',                           interpretacion: 'Protege tu salud y extiende tu vitalidad en el tiempo.' },
+  { numero: 29, nombre: 'Reiyel',    hebreo: 'ריי', significado: 'Liberación',                           interpretacion: 'Te libera de condicionamientos y limitaciones del ego.' },
+  { numero: 30, nombre: 'Omael',     hebreo: 'אום', significado: 'Paciencia y fecundidad',               interpretacion: 'Desarrolla tu paciencia y activa tu capacidad creadora.' },
+  { numero: 31, nombre: 'Lecabel',   hebreo: 'לכב', significado: 'Inspiración',                          interpretacion: 'Potencia tu inspiración artística y tu conexión con la belleza.' },
+  { numero: 32, nombre: 'Vasariah',  hebreo: 'ושר', significado: 'Clemencia',                            interpretacion: 'Desarrolla la clemencia y la compasión hacia ti y los demás.' },
+  { numero: 33, nombre: 'Yehuiah',   hebreo: 'יהו', significado: 'Voluntad divina',                      interpretacion: 'Alinea tu voluntad personal con la voluntad del Creador.' },
+  { numero: 34, nombre: 'Lehahiah',  hebreo: 'להח', significado: 'Obediencia',                           interpretacion: 'Desarrolla la humildad y la escucha de la guía superior.' },
+  { numero: 35, nombre: 'Chavakiah',  hebreo: 'חוק', significado: 'Reconciliación',                      interpretacion: 'Sana conflictos y restaura la armonía en tus vínculos.' },
+  { numero: 36, nombre: 'Menadel',   hebreo: 'מנד', significado: 'Trabajo y vocación',                   interpretacion: 'Te conecta con tu vocación verdadera y el trabajo como servicio.' },
+  { numero: 37, nombre: 'Aniel',     hebreo: 'עני', significado: 'Ruptura del círculo',                  interpretacion: 'Rompe ciclos negativos y abre nuevas posibilidades de existencia.' },
+  { numero: 38, nombre: 'Haamiah',   hebreo: 'הعم', significado: 'Rituales y preparación',               interpretacion: 'Profundiza tu práctica espiritual y tu preparación interior.' },
+  { numero: 39, nombre: 'Rehael',    hebreo: 'רהע', significado: 'Curación y rejuvenecimiento',          interpretacion: 'Activa procesos de curación profunda y renovación vital.' },
+  { numero: 40, nombre: 'Yeiazel',   hebreo: 'יי',  significado: 'Consuelo y liberación',                interpretacion: 'Trae consuelo en el dolor y libera la creatividad bloqueada.' },
+  { numero: 41, nombre: 'Hahahel',   hebreo: 'ההה', significado: 'Misión espiritual',                    interpretacion: 'Clarifica tu misión de vida y tu propósito espiritual.' },
+  { numero: 42, nombre: 'Mikael',    hebreo: 'מיכ', significado: 'Orden y diplomacia',                   interpretacion: 'Desarrolla tu capacidad política y de liderazgo consciente.' },
+  { numero: 43, nombre: 'Veuliah',   hebreo: 'וול', significado: 'Prosperidad',                          interpretacion: 'Abre los canales de prosperidad y abundancia en tu vida.' },
+  { numero: 44, nombre: 'Yelahiah',  hebreo: 'ילה', significado: 'Karma guerrero',                       interpretacion: 'Te da fortaleza para enfrentar tus karma y transformarlos.' },
+  { numero: 45, nombre: 'Sehaliah',  hebreo: 'סאל', significado: 'Voluntad y planta de vida',            interpretacion: 'Fortalece tu voluntad y te conecta con el plan de tu alma.' },
+  { numero: 46, nombre: 'Ariel',     hebreo: 'ערי', significado: 'Percepciones sutiles',                 interpretacion: 'Agudiza tu percepción y te conecta con mensajes del universo.' },
+  { numero: 47, nombre: 'Asaliah',   hebreo: 'עשל', significado: 'Contemplación de lo divino',           interpretacion: 'Eleva tu contemplación hacia las verdades más elevadas.' },
+  { numero: 48, nombre: 'Mihael',    hebreo: 'מיה', significado: 'Fertilidad y fidelidad',               interpretacion: 'Favorece la creatividad, la fertilidad y la fidelidad en el amor.' },
+  { numero: 49, nombre: 'Vehuel',    hebreo: 'והו', significado: 'Elevación y grandeza',                 interpretacion: 'Eleva tu conciencia y te conecta con la grandeza del alma.' },
+  { numero: 50, nombre: 'Daniel',    hebreo: 'דני', significado: 'Elocuencia divina',                    interpretacion: 'Potencia tu capacidad de expresión y comunicación sagrada.' },
+  { numero: 51, nombre: 'Hahasiah',  hebreo: 'ההש', significado: 'Medicina universal',                   interpretacion: 'Te conecta con los principios de curación cósmica y universal.' },
+  { numero: 52, nombre: 'Imamiah',   hebreo: 'עמם', significado: 'Expiación',                            interpretacion: 'Facilita la liberación de culpas y la sanación del pasado.' },
+  { numero: 53, nombre: 'Nanael',    hebreo: 'ננא', significado: 'Comunicación espiritual',              interpretacion: 'Abre canales de comunicación con planos espirituales elevados.' },
+  { numero: 54, nombre: 'Nithael',   hebreo: 'נית', significado: 'Rejuvenecimiento',                     interpretacion: 'Activa energías de renovación y eterna juventud espiritual.' },
+  { numero: 55, nombre: 'Mebahiah',  hebreo: 'מבה', significado: 'Claridad moral',                       interpretacion: 'Desarrolla tu claridad ética y tu compasión hacia los demás.' },
+  { numero: 56, nombre: 'Poyel',     hebreo: 'פוי', significado: 'Fortuna y filosofía',                  interpretacion: 'Atrae la fortuna y profundiza tu comprensión filosófica.' },
+  { numero: 57, nombre: 'Nemamiah',  hebreo: 'נמם', significado: 'Discernimiento',                       interpretacion: 'Desarrolla tu discernimiento para tomar decisiones sabias.' },
+  { numero: 58, nombre: 'Yeialel',   hebreo: 'יי',  significado: 'Fuerza mental',                        interpretacion: 'Fortalece tu mente y te protege de pensamientos negativos.' },
+  { numero: 59, nombre: 'Harahel',   hebreo: 'הרח', significado: 'Riqueza intelectual',                  interpretacion: 'Expande tu conocimiento y tu capacidad de aprendizaje.' },
+  { numero: 60, nombre: 'Mitzrael',  hebreo: 'מצר', significado: 'Curación interior',                    interpretacion: 'Sana heridas emocionales profundas y restaura tu equilibrio.' },
+  { numero: 61, nombre: 'Umabel',    hebreo: 'אום', significado: 'Afinidad y amistad',                   interpretacion: 'Atrae vínculos afines y profundiza tus amistades.' },
+  { numero: 62, nombre: 'Iah-Hel',   hebreo: 'יה',  significado: 'Sabiduría suprema',                    interpretacion: 'Te conecta con la sabiduría suprema y el conocimiento eterno.' },
+  { numero: 63, nombre: 'Anauel',    hebreo: 'ענו', significado: 'Percepción de la unidad',              interpretacion: 'Disuelve la ilusión de separación y te conecta con la unidad.' },
+  { numero: 64, nombre: 'Mehiel',    hebreo: 'מהי', significado: 'Protección contra adversidades',       interpretacion: 'Te protege de adversidades y fortalece tu campo energético.' },
+  { numero: 65, nombre: 'Damabiah',  hebreo: 'דמב', significado: 'Fuente de sabiduría',                  interpretacion: 'Activa tu fuente interior de sabiduría y creatividad.' },
+  { numero: 66, nombre: 'Manakel',   hebreo: 'מנק', significado: 'Conocimiento del bien y el mal',       interpretacion: 'Desarrolla tu discernimiento espiritual más profundo.' },
+  { numero: 67, nombre: 'Eyael',     hebreo: 'אי',  significado: 'Transformación sublime',               interpretacion: 'Facilita transformaciones profundas y el cambio de consciencia.' },
+  { numero: 68, nombre: 'Habuhiah',  hebreo: 'חבו', significado: 'Curación y fertilidad',                interpretacion: 'Activa la curación y la capacidad de dar vida y crear.' },
+  { numero: 69, nombre: 'Rochel',    hebreo: 'ראה', significado: 'Restitución',                          interpretacion: 'Restaura lo perdido y te devuelve lo que te pertenece.' },
+  { numero: 70, nombre: 'Jabamiah',  hebreo: 'יב',  significado: 'Alquimia y regeneración',              interpretacion: 'Opera la alquimia interna que transmuta el plomo en oro.' },
+  { numero: 71, nombre: 'Haiyael',   hebreo: 'הי',  significado: 'Armas divinas',                        interpretacion: 'Te equipa con las herramientas espirituales para tu misión.' },
+  { numero: 72, nombre: 'Mumiah',    hebreo: 'מומ', significado: 'Renacimiento',                         interpretacion: 'Facilita el renacimiento y la renovación completa del ser.' },
+];
+
+// ── Cálculo ──
+function getDayOfYear(date) {
+  const start = new Date(date.getFullYear(), 0, 0);
+  const diff = date - start;
+  const oneDay = 1000 * 60 * 60 * 24;
+  return Math.floor(diff / oneDay);
+}
+
+function getNombrePorDia(fecha) {
+  const day = getDayOfYear(fecha);
+  const idx = Math.floor(((day - 1) / 365) * 72);
+  return NOMBRES[Math.min(idx, 71)];
+}
+
+function getNombrePorHora(horas, minutos) {
+  const totalMinutos = horas * 60 + minutos;
+  const idx = Math.floor(totalMinutos / 20);
+  return NOMBRES[Math.min(idx, 71)];
+}
+
+function calcular() {
+  const fechaVal = document.getElementById('fecha').value;
+  const horaVal = document.getElementById('hora').value;
+
+  if (!fechaVal) {
+    alert('Por favor ingresá tu fecha de nacimiento.');
+    return;
+  }
+  if (!horaVal) {
+    alert('Por favor ingresá tu hora de nacimiento.');
+    return;
+  }
+
+  const fecha = new Date(fechaVal + 'T12:00:00');
+  const [horas, minutos] = horaVal.split(':').map(Number);
+
+  const nombreDia = getNombrePorDia(fecha);
+  const nombreHora = getNombrePorHora(horas, minutos);
+
+  // Día formateado
+  const opciones = { day: 'numeric', month: 'long', year: 'numeric' };
+  const fechaStr = fecha.toLocaleDateString('es-AR', opciones);
+
+  // Llenar resultado
+  document.getElementById('resultado-titulo').textContent = `Nacido/a el ${fechaStr} a las ${horaVal}hs`;
+
+  document.getElementById('num-dia').textContent = `Nombre Nº ${nombreDia.numero}`;
+  document.getElementById('heb-dia').textContent = nombreDia.hebreo;
+  document.getElementById('nombre-dia').textContent = nombreDia.nombre;
+  document.getElementById('sig-dia').textContent = nombreDia.significado;
+
+  document.getElementById('num-hora').textContent = `Nombre Nº ${nombreHora.numero}`;
+  document.getElementById('heb-hora').textContent = nombreHora.hebreo;
+  document.getElementById('nombre-hora').textContent = nombreHora.nombre;
+  document.getElementById('sig-hora').textContent = nombreHora.significado;
+
+  document.getElementById('interpretacion-texto').textContent =
+    `Tu Nombre del Día, ${nombreDia.nombre}, te dice: "${nombreDia.interpretacion}" ` +
+    `Tu Nombre de la Hora, ${nombreHora.nombre}, te invita a: "${nombreHora.interpretacion}" ` +
+    `Juntos, estos dos Nombres forman la tecnología espiritual única con la que llegaste al mundo. ` +
+    `Contemplar sus letras hebreas durante la meditación te conecta con esa energía original.`;
+
+  // Mostrar resultado
+  document.getElementById('formSection').style.display = 'none';
+  const res = document.getElementById('resultado');
+  res.style.display = 'block';
+  res.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetear() {
+  document.getElementById('formSection').style.display = 'block';
+  document.getElementById('resultado').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
